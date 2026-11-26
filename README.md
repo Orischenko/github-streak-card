@@ -1,13 +1,24 @@
-# 🌴 GitHub Streak Card — Sunset Edition
+# 🌴 GitHub Streak Card
 
-A synthwave-sunset commit streak card for your GitHub profile, rebuilt every day by GitHub Actions.
+Commit streak cards for your GitHub profile, drawn as little cityscapes and rebuilt every day by GitHub Actions.
 
 <img src="./assets/streak.svg" alt="Commit streak card" width="100%" />
 
 - **Current streak, longest streak and yearly total**, private contributions included.
-- **A skyline of your year**: one building per week, height = commits that week. Weeks of the current streak glow cyan.
+- **A skyline of your year**: one building per week, height = commits that week. Weeks of the current streak glow.
+- **Three themes**, all generated on every run.
 - **Zero dependencies**: two small Node scripts and the GitHub GraphQL API.
 - **Self-hosted**: the SVG lives in your repo, so no third-party card service can go down or rate-limit you.
+
+## Themes
+
+| Theme | Preview |
+| --- | --- |
+| `sunset`: neon synthwave sunset, palms, laser grid | <img src="./assets/streak-sunset.svg" width="420" alt="sunset theme" /> |
+| `deco`: lavender dusk over a gothic art-deco city, golden halo, cable car, dark water | <img src="./assets/streak-deco.svg" width="420" alt="deco theme" /> |
+| `americana`: golden hour over the hills, radio tower, tall palms, open road | <img src="./assets/streak-americana.svg" width="420" alt="americana theme" /> |
+
+Every run writes all of them to `assets/streak-<theme>.svg`. `assets/streak.svg` is the default theme, set with the `STREAK_THEME` variable (`sunset` if unset).
 
 ## Use it on your profile
 
@@ -18,8 +29,10 @@ A synthwave-sunset commit streak card for your GitHub profile, rebuilt every day
 5. **Embed the card** in your profile README (`<username>/<username>`):
 
    ```html
-   <img src="https://raw.githubusercontent.com/<username>/github-streak-card/main/assets/streak.svg" alt="Commit streak" width="100%" />
+   <img src="https://raw.githubusercontent.com/<username>/github-streak-card/main/assets/streak-deco.svg" alt="Commit streak" width="100%" />
    ```
+
+   Swap `streak-deco.svg` for any theme, or use `streak.svg` for the default one.
 
 ## Run locally
 
