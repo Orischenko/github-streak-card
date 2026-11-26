@@ -15,7 +15,7 @@ Commit streak cards for your GitHub profile, drawn as little cityscapes and rebu
 | Theme | Preview |
 | --- | --- |
 | `sunset`: neon synthwave sunset, palms, laser grid | <img src="./assets/streak-sunset.svg" width="420" alt="sunset theme" /> |
-| `deco`: lavender dusk over a gothic art-deco city, golden halo, cable car, dark water | <img src="./assets/streak-deco.svg" width="420" alt="deco theme" /> |
+| `noir`: foggy occult noir, teal-lit art-deco towers, hanging charms, street lamp, candles, ghostly pigeons | <img src="./assets/streak-noir.svg" width="420" alt="noir theme" /> |
 | `americana`: golden hour over the hills, radio tower, tall palms, open road | <img src="./assets/streak-americana.svg" width="420" alt="americana theme" /> |
 
 Every run writes all of them to `assets/streak-<theme>.svg`. `assets/streak.svg` is the default theme, set with the `STREAK_THEME` variable (`sunset` if unset).
@@ -29,10 +29,10 @@ Every run writes all of them to `assets/streak-<theme>.svg`. `assets/streak.svg`
 5. **Embed the card** in your profile README (`<username>/<username>`):
 
    ```html
-   <img src="https://raw.githubusercontent.com/<username>/github-streak-card/main/assets/streak-deco.svg" alt="Commit streak" width="100%" />
+   <img src="https://raw.githubusercontent.com/<username>/github-streak-card/main/assets/streak-noir.svg" alt="Commit streak" width="100%" />
    ```
 
-   Swap `streak-deco.svg` for any theme, or use `streak.svg` for the default one.
+   Swap `streak-noir.svg` for any theme, or use `streak.svg` for the default one.
 
 ## Run locally
 
