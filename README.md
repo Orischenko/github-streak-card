@@ -57,7 +57,7 @@ GitHub shows which achievements you have, but not how far you are from the next 
 | --- | --- | --- |
 | 🦈 Pull Shark | x3 🥈 | `▓▓░░░░░░░░░░` 130 / 1024 merged PRs |
 | 🧠 Galaxy Brain | x3 🥈 | `▓▓▓▓▓▓░░░░░░` 16 / 32 accepted answers |
-| ⭐ Starstruck | — | `░░░░░░░░░░░░` 0 / 16 stars on top repo |
+| ⭐ Starstruck | — | `▓░░░░░░░░░░░` 1 / 16 stars on top repo |
 | ❤️ Public Sponsor | Default | `▓▓▓▓▓▓▓▓▓▓▓▓` 1 sponsorships · max level |
 
 <sub>Updated automatically via the GitHub GraphQL API · 2026-11-26</sub>
