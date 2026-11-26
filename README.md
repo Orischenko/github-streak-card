@@ -6,7 +6,7 @@ Commit streak cards for your GitHub profile, drawn as little cityscapes and rebu
 
 - **Current streak, longest streak and yearly total**, private contributions included.
 - **A skyline of your year**: one building per week, height = commits that week. Weeks of the current streak glow.
-- **Three themes**, all generated on every run.
+- **Four themes**, all generated on every run.
 - **Zero dependencies**: two small Node scripts and the GitHub GraphQL API.
 - **Self-hosted**: the SVG lives in your repo, so no third-party card service can go down or rate-limit you.
 
@@ -15,6 +15,7 @@ Commit streak cards for your GitHub profile, drawn as little cityscapes and rebu
 | Theme | Preview |
 | --- | --- |
 | `sunset`: neon synthwave sunset, palms, laser grid | <img src="./assets/streak-sunset.svg" width="420" alt="sunset theme" /> |
+| `dusk`: pastel Miami dusk, periwinkle-to-peach sky, lilac haze | <img src="./assets/streak-dusk.svg" width="420" alt="dusk theme" /> |
 | `noir`: foggy occult noir, teal-lit art-deco towers, hanging charms, street lamp, candles, ghostly pigeons | <img src="./assets/streak-noir.svg" width="420" alt="noir theme" /> |
 | `americana`: golden hour over the hills, radio tower, tall palms, open road | <img src="./assets/streak-americana.svg" width="420" alt="americana theme" /> |
 

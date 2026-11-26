@@ -30,6 +30,21 @@ const THEMES = {
     label: "#ffc4ec", value: "#ffffff", sub: "#f7a8d8", foot: "#ff9ad5",
     glow: "#ff3d7f", glowCenter: "#2de2e6",
   },
+  // Pastel Miami dusk: periwinkle-to-peach sky, lilac haze, plum silhouettes.
+  dusk: {
+    scene: "synth",
+    sky: ["#34226e", "#6a4fd6", "#b65dd5", "#f46cb4", "#f6a06e"],
+    stars: true,
+    sunStyle: "bands", sun: ["#ffe2a8", "#ffa27c", "#f46cb4"], sunGlow: "#ff9ac4",
+    haze: "#c58bf0",
+    building: "#3a2a6e", edge: "#ff9ccf", hot: "#8ff0ff", window: "#ffc988",
+    ground: ["#3b2563", "#1b1130"], groundStyle: "grid", grid: "#ff8fc8", gridOpacity: 0.4,
+    horizon: "#ffb3d6",
+    palms: "fan", palm: "#2a1d3d",
+    font: SANS, italic: true,
+    label: "#ffe6f4", value: "#ffffff", sub: "#ffd6ea", foot: "#ffc6e2",
+    glow: "#c2408f", glowCenter: "#6a4fd6", shadow: "#2a1650",
+  },
   // Foggy occult noir: teal-lit art-deco towers in mist, a wire of hanging
   // charms and bulbs, a street lamp, candles and ghostly pigeons.
   noir: {
