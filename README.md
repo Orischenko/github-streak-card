@@ -1,12 +1,12 @@
 # 🌴 GitHub Streak Card
 
-Commit streak cards for your GitHub profile, drawn as little cityscapes and rebuilt every day by GitHub Actions.
+Commit streak cards for your GitHub profile, drawn as little cityscapes and rebuilt every 6 hours by GitHub Actions.
 
 <img src="./assets/streak.svg" alt="Commit streak card" width="100%" />
 
 - **Current streak, longest streak and yearly total**, private contributions included.
-- **A skyline of your year**: one building per week, height = commits that week. Weeks of the current streak glow.
-- **Four themes**, all generated on every run.
+- **A skyline of the calendar year**: one building per week from January to December, height = contributions that week, with month ticks underneath. Current-streak weeks light up, and weeks still to come stand as dark buildings with no lit windows yet.
+- **Three themes**, all generated on every run.
 - **Zero dependencies**: two small Node scripts and the GitHub GraphQL API.
 - **Self-hosted**: the SVG lives in your repo, so no third-party card service can go down or rate-limit you.
 
@@ -14,19 +14,18 @@ Commit streak cards for your GitHub profile, drawn as little cityscapes and rebu
 
 | Theme | Preview |
 | --- | --- |
-| `sunset`: neon synthwave sunset, palms, laser grid | <img src="./assets/streak-sunset.svg" width="420" alt="sunset theme" /> |
 | `dusk`: pastel Miami dusk, periwinkle-to-peach sky, lilac haze | <img src="./assets/streak-dusk.svg" width="420" alt="dusk theme" /> |
 | `noir`: foggy occult noir, teal-lit art-deco towers, hanging charms, street lamp, candles, ghostly pigeons | <img src="./assets/streak-noir.svg" width="420" alt="noir theme" /> |
 | `americana`: golden hour over the hills, radio tower, tall palms, open road | <img src="./assets/streak-americana.svg" width="420" alt="americana theme" /> |
 
-Every run writes all of them to `assets/streak-<theme>.svg`. `assets/streak.svg` is the default theme, set with the `STREAK_THEME` variable (`sunset` if unset).
+Every run writes all of them to `assets/streak-<theme>.svg`. `assets/streak.svg` is the default theme, set with the `STREAK_THEME` variable (`dusk` if unset).
 
 ## Use it on your profile
 
 1. **Fork** this repository (or use it as a template).
 2. **Create a token**: Settings → Developer settings → Personal access tokens → *Tokens (classic)*, scopes `repo` and `read:user`. The `repo` scope lets the card count your private contributions; skip it if you only want public ones.
 3. **Add the token** to your fork: Settings → Secrets and variables → Actions → New repository secret, name `PROFILE_STATS_TOKEN`.
-4. **Run the workflow** once: Actions → *Update streak card* → Run workflow. After that it runs daily at 06:00 UTC.
+4. **Run the workflow** once: Actions → *Update streak card* → Run workflow. After that it runs every 6 hours.
 5. **Embed the card** in your profile README (`<username>/<username>`):
 
    ```html

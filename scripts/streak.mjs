@@ -1,7 +1,7 @@
 // Builds streak cards from the GitHub contribution calendar (private
 // contributions included when the token belongs to the profile owner).
 // Every theme is written to assets/streak-<theme>.svg; the theme from
-// STREAK_THEME (default "sunset") is also written to assets/streak.svg.
+// STREAK_THEME (default "dusk") is also written to assets/streak.svg.
 // No dependencies.
 import { mkdir, writeFile } from "node:fs/promises";
 
@@ -16,20 +16,6 @@ const SERIF = `Georgia, "Times New Roman", serif`;
 
 // ---- themes ------------------------------------------------------------
 const THEMES = {
-  // Neon synthwave sunset: striped sun, palms, laser grid.
-  sunset: {
-    scene: "synth",
-    sky: ["#0d0221", "#2b0b4f", "#6a1b6e", "#c7366f", "#ff7b54"],
-    stars: true,
-    sunStyle: "bands", sun: ["#ffe66d", "#ff9a3c", "#ff3d7f"], sunGlow: "#ff5e8a",
-    building: "#1b0a33", edge: "#ff3d7f", hot: "#2de2e6", window: "#ffd36b",
-    ground: ["#1a0636", "#090114"], groundStyle: "grid", grid: "#ff3d7f", gridOpacity: 0.35,
-    horizon: "#ff6ec7",
-    palms: "fan", palm: "#0b0218",
-    font: SANS, italic: true,
-    label: "#ffc4ec", value: "#ffffff", sub: "#f7a8d8",
-    glow: "#ff3d7f", glowCenter: "#2de2e6",
-  },
   // Pastel Miami dusk: periwinkle-to-peach sky, lilac haze, plum silhouettes.
   dusk: {
     scene: "synth",
@@ -56,7 +42,7 @@ const THEMES = {
     charm: "#040a09", charmLine: "#c9bfa5", bulb: "#fff1c9", bulbGlow: "#ffe9a8",
     candle: ["#f3e9d2", "#c9b48f"], flame: "#ffd27a", flameGlow: "#ffb347",
     ghost: "#9bffd8",
-    font: SERIF, italic: false, labelSpacing: 4,
+    font: SERIF, italic: false, labelSpacing: 3,
     label: "#e8dcc2", value: "#f3ead6", sub: "#b9cbb8",
     glow: "#1f6b58", glowCenter: "#5fe3b1",
   },
@@ -69,7 +55,7 @@ const THEMES = {
     sunStyle: "plain", sun: ["#fff4c2", "#ffd07a", "#f7a24b"], sunGlow: "#ffb067",
     hillsFar: "#c98a5a", hills: "#a35a2c", tower: { color: "#3b2418", light: "#ef4444" },
     haze: "#f4a66a",
-    building: "#646a7c", edge: "#8a93a8", hot: "#ffe08a", window: "#ffd38a",
+    building: "#646a7c", edge: "#8a93a8", hot: "#ffd34d", window: "#ffd38a",
     ground: ["#7a5230", "#3a2414"], groundStyle: "road", horizon: "#f2b47a",
     road: { fill: "#2e2622", edge: "#f5e6c8", dash: "#f4c95d" },
     palms: "tall", palm: "#2b1a12",
@@ -79,19 +65,27 @@ const THEMES = {
   },
 };
 
-const defaultTheme = process.env.STREAK_THEME || "sunset";
+const defaultTheme = process.env.STREAK_THEME || "dusk";
 if (!THEMES[defaultTheme]) {
   console.error(`Unknown STREAK_THEME "${defaultTheme}". Use one of: ${Object.keys(THEMES).join(", ")}`);
   process.exit(1);
 }
 
 // ---- data --------------------------------------------------------------
+// The stats use the last 365 days (they match the contribution graph on the
+// profile); the skyline uses the current calendar year, January to December.
+const YEAR = new Date().getUTCFullYear();
 const query = `{
   viewer {
     login
     contributionsCollection {
       contributionCalendar {
         totalContributions
+        weeks { contributionDays { date contributionCount } }
+      }
+    }
+    year: contributionsCollection(from: "${YEAR}-01-01T00:00:00Z", to: "${new Date().toISOString()}") {
+      contributionCalendar {
         weeks { contributionDays { date contributionCount } }
       }
     }
@@ -140,8 +134,30 @@ const inCurrent = (date) =>
   current.len > 0 && date >= current.start && date <= current.end;
 
 const best = days.reduce((a, d) => (d.contributionCount > a.contributionCount ? d : a), days[0]);
-const totals = weeks.map((w) => w.reduce((s, d) => s + d.contributionCount, 0));
-const maxWeek = Math.max(1, ...totals);
+
+// Calendar-year weeks (Sunday to Saturday, like GitHub), from the week that
+// holds Jan 1 to the week that holds Dec 31. Weeks after this one are future.
+const today = days[days.length - 1].date;
+const yearCounts = new Map(
+  json.data.viewer.year.contributionCalendar.weeks
+    .flatMap((w) => w.contributionDays)
+    .map((d) => [d.date, d.contributionCount]),
+);
+const DAY = 86400000;
+const iso = (ms) => new Date(ms).toISOString().slice(0, 10);
+const jan1 = Date.UTC(YEAR, 0, 1);
+const dec31 = Date.UTC(YEAR, 11, 31);
+const yearWeeks = [];
+for (let start = jan1 - new Date(jan1).getUTCDay() * DAY; start <= dec31; start += 7 * DAY) {
+  const dates = Array.from({ length: 7 }, (_, n) => iso(start + n * DAY));
+  yearWeeks.push({
+    dates,
+    total: dates.reduce((s, d) => s + (yearCounts.get(d) ?? 0), 0),
+    future: dates[0] > today,
+    now: dates[0] <= today && today <= dates[6],
+  });
+}
+const maxWeek = Math.max(1, ...yearWeeks.filter((w) => !w.future).map((w) => w.total));
 
 // ---- helpers -----------------------------------------------------------
 const fmt = (date) =>
@@ -167,14 +183,47 @@ const lineY = (k) => HORIZON + 3 + (k + 1) ** 2 * 1.2; // perspective rows, k = 
 
 // One building per week; height = commits that week (sqrt keeps one huge
 // week from flattening the rest).
-const LEFT = 34;
-const BW = (W - LEFT * 2) / weeks.length;
-const buildings = weeks.map((w, k) => {
-  const h = 6 + Math.sqrt(totals[k] / maxWeek) * 52;
-  return { k, x: LEFT + k * BW, y: HORIZON - h, h, hot: w.some((d) => inCurrent(d.date)) };
+// The skyline sits between the palms so the newest weeks are never hidden.
+const SKY_L = 80;
+const SKY_R = 760;
+const BW = (SKY_R - SKY_L) / yearWeeks.length;
+const buildings = yearWeeks.map((w, k) => {
+  // Future weeks are empty lots: a low stub so the rest of the year shows.
+  const h = w.future ? 3 : 6 + Math.sqrt(w.total / maxWeek) * 52;
+  return {
+    k, x: SKY_L + k * BW, y: HORIZON - h, h,
+    future: w.future, now: w.now, hot: !w.future && w.dates.some(inCurrent),
+  };
 });
 
-// ====== synth scene (sunset, dusk, americana) ===========================
+// Month labels under the skyline (Jan..Dec) make it read as a timeline, like
+// GitHub's contribution graph. Each label is centred on its month's weeks.
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const weekOf = (date) => yearWeeks.findIndex((w) => w.dates.includes(date));
+function monthAxis() {
+  return MONTHS.map((name, m) => {
+    const from = weekOf(iso(Date.UTC(YEAR, m, 1)));
+    const to = weekOf(iso(Date.UTC(YEAR, m + 1, 0)));
+    const cx = SKY_L + ((from + to + 1) / 2) * BW;
+    return `<text x="${f(cx)}" y="${HORIZON + 10}" class="axis">${name}</text>`;
+  }).join("");
+}
+
+// Weeks still to come: ordinary low buildings with no lit windows yet.
+const FUTURE_H = 16;
+const dark = (x, t, edge) =>
+  `<rect x="${f(x + 1)}" y="${HORIZON - FUTURE_H}" width="${f(BW - 2)}" height="${FUTURE_H}" fill="${t.building}"/>` +
+  (edge ? `<rect x="${f(x + 1)}" y="${HORIZON - FUTURE_H}" width="${f(BW - 2)}" height="2" fill="${t.edge}" opacity="0.7"/>` : "");
+
+// Streak weeks light up as a whole.
+function streakMarks(t) {
+  return buildings
+    .filter((b) => b.hot)
+    .map(({ x, y, h }) => `<rect x="${f(x + 0.5)}" y="${f(y)}" width="${f(BW - 1)}" height="${f(h)}" fill="${t.hot}" opacity="0.55"/><rect x="${f(x + 0.5)}" y="${f(y)}" width="${f(BW - 1)}" height="2" fill="${t.hot}" filter="url(#neon)"/>`)
+    .join("");
+}
+
+// ====== synth scene (dusk, americana) ===================================
 
 function palm(x, base, h, dir, color, s = 1) {
   const topX = x + dir * 18 * s;
@@ -228,9 +277,9 @@ function palms(t) {
   if (t.palms === "tall") {
     return (
       tallPalm(26, base, 150, 1, t.palm, 0.5) +
-      tallPalm(84, base, 92, 1, t.palm, 0.42) +
+      tallPalm(40, base, 92, 1, t.palm, 0.42) +
       tallPalm(W - 26, base, 146, -1, t.palm, 0.5) +
-      tallPalm(W - 84, base, 88, -1, t.palm, 0.42)
+      tallPalm(W - 40, base, 88, -1, t.palm, 0.42)
     );
   }
   return "";
@@ -259,9 +308,10 @@ function hills(t) {
 
 function synthSkyline(t) {
   return buildings
-    .map(({ k, x, y, h, hot }) => {
+    .map(({ k, x, y, h, hot, future }) => {
+      if (future) return dark(x, t, true);
       let out = `<rect x="${f(x + 1)}" y="${f(y)}" width="${f(BW - 2)}" height="${f(h)}" fill="${t.building}"/>`;
-      out += `<rect x="${f(x + 1)}" y="${f(y)}" width="${f(BW - 2)}" height="2" fill="${hot ? t.hot : t.edge}" opacity="${hot ? 1 : 0.7}"${hot ? ' filter="url(#neon)"' : ""}/>`;
+      if (!hot) out += `<rect x="${f(x + 1)}" y="${f(y)}" width="${f(BW - 2)}" height="2" fill="${t.edge}" opacity="0.7"/>`;
       for (let row = 0; y + 5 + row * 7 < HORIZON - 3; row++) {
         if ((row + k) % 3 === 0) {
           out += `<rect x="${f(x + BW / 2 - 1.1)}" y="${f(y + 5 + row * 7)}" width="2.2" height="2.2" fill="${t.window}" opacity="0.8"/>`;
@@ -352,9 +402,9 @@ function towerLayer(t, seed, fill, minH, maxH, minW, maxW, lit, winOpacity) {
 function noirSkyline(t) {
   const rand = seeded(31);
   return buildings
-    .map(({ x, y, h, hot }) => {
+    .map(({ x, y, h, hot, future }) => {
+      if (future) return dark(x, t, false);
       let out = `<rect x="${f(x + 0.5)}" y="${f(y)}" width="${f(BW - 1)}" height="${f(h)}" fill="${t.building}"/>`;
-      if (hot) out += `<rect x="${f(x + 0.5)}" y="${f(y)}" width="${f(BW - 1)}" height="2" fill="${t.hot}" filter="url(#neon)"/>`;
       for (let row = 0; y + 4 + row * 5.5 < HORIZON - 3; row++) {
         for (const c of [0.28, 0.62]) {
           if (rand() < (hot ? 0.85 : 0.42)) {
@@ -437,7 +487,7 @@ function pigeon(t, x, y, s, dir) {
 
 function noirScene(t) {
   const reflections = buildings
-    .filter(({ k }) => k % 2 === 0)
+    .filter(({ k, future }) => k % 2 === 0 && !future)
     .map(({ x, h, hot }, n) => {
       const len = 6 + h * 0.35;
       return `<line x1="${f(x + BW / 2)}" y1="${HORIZON + 3}" x2="${f(x + BW / 2)}" y2="${f(HORIZON + 3 + len)}" stroke="${hot ? t.hot : n % 5 === 0 ? t.warm : t.window}" stroke-width="3" opacity="${hot ? 0.45 : 0.2}" filter="url(#smear)"/>`;
@@ -476,8 +526,8 @@ function render(t) {
   const stops = (colors) =>
     colors.map((c, k) => `<stop offset="${(k / (colors.length - 1)).toFixed(2)}" stop-color="${c}"/>`).join("");
   const shadow = t.shadow ? ' filter="url(#shadow)"' : "";
-  const stat = (x, label, value, sub, glowId, size) => `
-    <text x="${x}" y="28" class="label"${shadow}>${label}</text>
+  const stat = (x, label, value, sub, glowId, size, labelClass = "label") => `
+    <text x="${x}" y="28" class="${labelClass}"${shadow}>${label}</text>
     <text x="${x}" y="${28 + size}" class="value" font-size="${size}" filter="url(#${glowId})">${value}</text>
     <text x="${x}" y="${44 + size}" class="sub"${shadow}>${sub}</text>`;
 
@@ -498,6 +548,8 @@ function render(t) {
     .label { font-size: 10.5px; letter-spacing: ${t.labelSpacing ?? 3}px; fill: ${t.label}; font-weight: 600; }
     .value { font-weight: ${t.italic ? 800 : 700}; font-style: ${t.italic ? "italic" : "normal"}; fill: ${t.value}; }
     .sub { font-size: 10.5px; fill: ${t.sub}; }
+    .hot { fill: ${t.hot}; }
+    .axis { font-size: 7.5px; letter-spacing: 0.5px; fill: ${t.sub}; opacity: 0.75; }
     .pulse { animation: pulse 4s ease-in-out infinite; }
     .flicker { animation: flicker 2.6s ease-in-out infinite; }
     @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 0.85; } }
@@ -526,9 +578,11 @@ function render(t) {
 
   <g clip-path="url(#card)">
     ${t.scene === "noir" ? noirScene(t) : synthScene(t)}
+    ${streakMarks(t)}
+    ${monthAxis()}
 
-    ${stat(190, "TOTAL · 1 YEAR", num(cal.totalContributions), `best day ${fmt(best.date)} · ${best.contributionCount}`, "glow", 30)}
-    ${stat(W / 2, "CURRENT STREAK", plural(current.len, "day"), range(current), "glow-center", 36)}
+    ${stat(190, "CONTRIBUTIONS · 1 YEAR", num(cal.totalContributions), `best day: ${best.contributionCount} on ${fmt(best.date)}`, "glow", 30)}
+    ${stat(W / 2, "CURRENT STREAK", plural(current.len, "day"), range(current), "glow-center", 36, "label hot")}
     ${stat(W - 190, "LONGEST STREAK", plural(longest.len, "day"), range(longest), "glow", 30)}
   </g>
 </svg>
