@@ -1,24 +1,14 @@
-# 🌴 GitHub Streak Card
+# 🐱 GitHub Streak Card
 
-Commit streak cards for your GitHub profile, drawn as little cityscapes and rebuilt every 6 hours by GitHub Actions.
+A commit streak banner for your GitHub profile: a painted sunset waterfront with GitHub graffiti, a cat on the wall, and your streaks in a graffiti font. Rebuilt every 6 hours by GitHub Actions.
 
 <img src="./assets/streak.svg" alt="Commit streak card" width="100%" />
 
-- **Current streak, longest streak and yearly total**, private contributions included.
-- **A skyline of the calendar year**: one building per week from January to December, height = contributions that week, with month ticks underneath. Current-streak weeks light up, and weeks still to come stand as dark buildings with no lit windows yet.
-- **Three themes**, all generated on every run.
+- **Current and longest streak with their dates**, private contributions included.
+- **Live text, fixed art**: the scene and the graffiti fonts live in `assets/graffiti-template.svg`; each run fills in your numbers.
+- **Sized for the profile**: 846×221, the height of the avatar column on desktop.
 - **Zero dependencies**: two small Node scripts and the GitHub GraphQL API.
 - **Self-hosted**: the SVG lives in your repo, so no third-party card service can go down or rate-limit you.
-
-## Themes
-
-| Theme | Preview |
-| --- | --- |
-| `dusk`: pastel Miami dusk, periwinkle-to-peach sky, lilac haze | <img src="./assets/streak-dusk.svg" width="420" alt="dusk theme" /> |
-| `noir`: foggy occult noir, teal-lit art-deco towers, hanging charms, street lamp, candles, ghostly pigeons | <img src="./assets/streak-noir.svg" width="420" alt="noir theme" /> |
-| `americana`: golden hour over the hills, radio tower, tall palms, open road | <img src="./assets/streak-americana.svg" width="420" alt="americana theme" /> |
-
-Every run writes all of them to `assets/streak-<theme>.svg`. `assets/streak.svg` is the default theme, set with the `STREAK_THEME` variable (`dusk` if unset).
 
 ## Use it on your profile
 
@@ -29,10 +19,8 @@ Every run writes all of them to `assets/streak-<theme>.svg`. `assets/streak.svg`
 5. **Embed the card** in your profile README (`<username>/<username>`):
 
    ```html
-   <img src="https://raw.githubusercontent.com/<username>/github-streak-card/main/assets/streak-noir.svg" alt="Commit streak" width="100%" />
+   <img src="https://raw.githubusercontent.com/<username>/github-streak-card/main/assets/streak.svg" alt="Commit streak" width="100%" />
    ```
-
-   Swap `streak-noir.svg` for any theme, or use `streak.svg` for the default one.
 
 ## Run locally
 
