@@ -1,0 +1,10 @@
+{
+  "name": "github-streak-card",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "streak": "node scripts/streak.mjs",
+    "achievements": "node scripts/achievements.mjs"
+  }
+}

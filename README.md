@@ -1,0 +1,55 @@
+# 🌴 GitHub Streak Card — Sunset Edition
+
+A synthwave-sunset commit streak card for your GitHub profile, rebuilt every day by GitHub Actions.
+
+<img src="./assets/streak.svg" alt="Commit streak card" width="100%" />
+
+- **Current streak, longest streak and yearly total**, private contributions included.
+- **A skyline of your year**: one building per week, height = commits that week. Weeks of the current streak glow cyan.
+- **Zero dependencies**: two small Node scripts and the GitHub GraphQL API.
+- **Self-hosted**: the SVG lives in your repo, so no third-party card service can go down or rate-limit you.
+
+## Use it on your profile
+
+1. **Fork** this repository (or use it as a template).
+2. **Create a token**: Settings → Developer settings → Personal access tokens → *Tokens (classic)*, scopes `repo` and `read:user`. The `repo` scope lets the card count your private contributions; skip it if you only want public ones.
+3. **Add the token** to your fork: Settings → Secrets and variables → Actions → New repository secret, name `PROFILE_STATS_TOKEN`.
+4. **Run the workflow** once: Actions → *Update streak card* → Run workflow. After that it runs daily at 06:00 UTC.
+5. **Embed the card** in your profile README (`<username>/<username>`):
+
+   ```html
+   <img src="https://raw.githubusercontent.com/<username>/github-streak-card/main/assets/streak.svg" alt="Commit streak" width="100%" />
+   ```
+
+## Run locally
+
+```bash
+GH_TOKEN=$(gh auth token) node scripts/streak.mjs
+```
+
+The card is written to `assets/streak.svg`. Requires Node.js 18+.
+
+## How the streak is counted
+
+- A day counts if it has at least one contribution in your GitHub contribution calendar.
+- Today without contributions does **not** break the current streak until the day is over.
+- The calendar covers the last 365 days, so the longest streak is the longest one within that window.
+
+## Bonus: achievement progress
+
+GitHub shows which achievements you have, but not how far you are from the next tier. `scripts/achievements.mjs` fills the table below with live numbers.
+
+<!-- ACHIEVEMENTS:START -->
+| Achievement | Level | Progress to next level |
+| --- | --- | --- |
+| 🦈 Pull Shark | x3 🥈 | `▓▓░░░░░░░░░░` 130 / 1024 merged PRs |
+| 🧠 Galaxy Brain | x3 🥈 | `▓▓▓▓▓▓░░░░░░` 16 / 32 accepted answers |
+| ⭐ Starstruck | — | `░░░░░░░░░░░░` 0 / 16 stars on top repo |
+| ❤️ Public Sponsor | Default | `▓▓▓▓▓▓▓▓▓▓▓▓` 1 sponsorships · max level |
+
+<sub>Updated automatically via the GitHub GraphQL API · 2026-11-26</sub>
+<!-- ACHIEVEMENTS:END -->
+
+## License
+
+[MIT](LICENSE)
