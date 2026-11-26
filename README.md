@@ -56,7 +56,7 @@ GitHub shows which achievements you have, but not how far you are from the next 
 <!-- ACHIEVEMENTS:START -->
 | Achievement | Level | Progress to next level |
 | --- | --- | --- |
-| 🦈 Pull Shark | x3 🥈 | `▓▓░░░░░░░░░░` 130 / 1024 merged PRs |
+| 🦈 Pull Shark | x3 🥈 | `▓▓░░░░░░░░░░` 131 / 1024 merged PRs |
 | 🧠 Galaxy Brain | x3 🥈 | `▓▓▓▓▓▓░░░░░░` 16 / 32 accepted answers |
 | ⭐ Starstruck | — | `▓▓░░░░░░░░░░` 2 / 16 stars on top repo |
 | ❤️ Public Sponsor | Default | `▓▓▓▓▓▓▓▓▓▓▓▓` 1 sponsorships · max level |
