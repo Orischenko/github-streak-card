@@ -2,7 +2,8 @@ name: Update streak card
 
 on:
   schedule:
-    - cron: "0 */6 * * *" # every 6 hours
+    # Hourly at an off-peak minute: GitHub often delays or drops runs at :00.
+    - cron: "23 * * * *"
   workflow_dispatch:
 
 permissions:

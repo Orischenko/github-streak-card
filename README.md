@@ -1,6 +1,6 @@
 # 🐱 GitHub Streak Card
 
-A commit streak banner for your GitHub profile: a painted sunset waterfront with GitHub graffiti, a cat on the wall, and your streaks in a graffiti font. Rebuilt every 6 hours by GitHub Actions.
+A commit streak banner for your GitHub profile: a painted sunset waterfront with GitHub graffiti, a cat on the wall, and your streaks in a graffiti font. Rebuilt every hour by GitHub Actions.
 
 <img src="./assets/streak.svg" alt="Commit streak card" width="100%" />
 
@@ -15,7 +15,7 @@ A commit streak banner for your GitHub profile: a painted sunset waterfront with
 1. **Fork** this repository (or use it as a template).
 2. **Create a token**: Settings → Developer settings → Personal access tokens → *Tokens (classic)*, scopes `repo` and `read:user`. The `repo` scope lets the card count your private contributions; skip it if you only want public ones.
 3. **Add the token** to your fork: Settings → Secrets and variables → Actions → New repository secret, name `PROFILE_STATS_TOKEN`.
-4. **Run the workflow** once: Actions → *Update streak card* → Run workflow. After that it runs every 6 hours.
+4. **Run the workflow** once: Actions → *Update streak card* → Run workflow. After that it runs every hour.
 5. **Embed the card** in your profile README (`<username>/<username>`):
 
    ```html
